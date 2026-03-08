@@ -1,7 +1,6 @@
 # Tasks
 
 ## Todo
-- Supabase セットアップ
 - projects テーブル作成
 - tasks テーブル作成
 - task_notes テーブル作成
@@ -17,3 +16,4 @@
 
 ## Done
 - Next.js プロジェクト初期化
+- Supabase セットアップ

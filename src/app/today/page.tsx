@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listTodayTasks } from "@/lib/supabase/queries";
-import { TaskStatusButton } from "./TaskStatusButton";
+import { TaskStatusButton } from "@/components/TaskStatusButton";
+import { changeTaskStatusAction } from "./actions";
 
 export default async function TodayPage() {
   const today = new Date().toISOString().split("T")[0];
@@ -27,7 +28,10 @@ export default async function TodayPage() {
               key={task.id}
               className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200"
             >
-              <TaskStatusButton taskId={task.id} status={task.status} />
+              <TaskStatusButton
+                status={task.status}
+                action={changeTaskStatusAction.bind(null, task.id, task.status)}
+              />
               <span className="text-sm flex-1">{task.title}</span>
               <div className="flex items-center gap-2 ml-auto">
                 <span

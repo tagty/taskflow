@@ -1,7 +1,6 @@
 "use client";
 
 import { useTransition } from "react";
-import { changeTaskStatusAction } from "./actions";
 import type { Task } from "@/lib/supabase/queries";
 
 const STATUS_LABEL: Record<Task["status"], string> = {
@@ -16,12 +15,18 @@ const STATUS_COLOR: Record<Task["status"], string> = {
   done: "bg-green-100 text-green-700 hover:bg-green-200",
 };
 
-export function TaskStatusButton({ taskId, status }: { taskId: string; status: Task["status"] }) {
+export function TaskStatusButton({
+  status,
+  action,
+}: {
+  status: Task["status"];
+  action: () => Promise<void>;
+}) {
   const [isPending, startTransition] = useTransition();
 
   return (
     <button
-      onClick={() => startTransition(() => changeTaskStatusAction(taskId, status))}
+      onClick={() => startTransition(() => action())}
       disabled={isPending}
       className={`text-xs px-2 py-0.5 rounded-full transition-colors ${STATUS_COLOR[status]} ${isPending ? "opacity-50" : ""}`}
     >

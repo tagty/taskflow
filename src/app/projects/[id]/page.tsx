@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProject, listTasksByProject } from "@/lib/supabase/queries";
-import { createTaskAction } from "./actions";
-import { TaskStatusButton } from "./TaskStatusButton";
-
+import { createTaskAction, changeTaskStatusAction } from "./actions";
+import { TaskStatusButton } from "@/components/TaskStatusButton";
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -72,7 +71,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   key={task.id}
                   className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200"
                 >
-                  <TaskStatusButton projectId={id} taskId={task.id} status={task.status} />
+                  <TaskStatusButton
+                    status={task.status}
+                    action={changeTaskStatusAction.bind(null, id, task.id, task.status)}
+                  />
                   <span className="text-sm">{task.title}</span>
                   {task.due_date && (
                     <span className="ml-auto text-xs text-gray-400">{task.due_date}</span>

@@ -1,62 +1,56 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Personal Dev OS — 個人向けタスク管理アプリ。
 
-## Project Overview
-
-Personal Dev OS — 個人向けタスク管理アプリ。プロジェクト・タスク・メモを一元管理する。
-
-## Tech Stack (planned)
-
-- **Frontend/Backend**: Next.js (App Router) + TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: Supabase (PostgreSQL)
-
-## Commands
-
-After Next.js is initialized:
+## コマンド
 
 ```bash
-npm run dev      # Start dev server
-npm run build    # Build for production
-npm run lint     # Run ESLint
+npm run dev           # 開発サーバー起動
+npm run build         # ビルド（実装後に必ず実行して検証する）
+npm run lint          # ESLint
+npm run test          # Vitest ユニットテスト
+npm run test:e2e      # Playwright スクリーンショット比較
+npm run test:e2e:update  # スクリーンショットのベースライン更新
+npx supabase db push  # DBマイグレーションをリモートに適用
 ```
 
-## Architecture
+## UI検証ワークフロー
 
-### Directory Structure (planned)
+`claude --chrome` で起動すると Chrome を直接操作できる。UI変更後の検証例：
+- `localhost:3000 を開いてプロジェクト作成フォームをテストして。コンソールエラーも確認して`
+- `UIを変更したので localhost:3000 のスクリーンショットを撮って tests/visual.spec.ts-snapshots/ と比較して`
+
+## アーキテクチャ
+
+- **フレームワーク**: Next.js App Router + TypeScript
+- **DB**: Supabase (PostgreSQL) — `src/lib/supabase/queries.ts` にクエリを集約
+- **スタイル**: Tailwind CSS
+- **サーバーアクション**: 各ページの `actions.ts` に定義（`"use server"`）
+- **共通コンポーネント**: `src/components/`
+
+## ディレクトリ構造
 
 ```
 src/
-  app/                  # Next.js App Router pages
-    projects/           # Project list & detail pages
-    today/              # Today's tasks view
-    history/            # Completed tasks history
-  components/           # Shared UI components
-  lib/
-    supabase/           # Supabase client & queries
+  app/
+    projects/         # プロジェクト一覧・作成
+    projects/[id]/    # プロジェクト詳細・タスク管理
+    today/            # 今日のタスク
+    history/          # 完了履歴
+  components/         # 共有UIコンポーネント
+  lib/supabase/       # client.ts / admin.ts / queries.ts
+supabase/migrations/  # DBマイグレーションファイル
 ```
 
-### Data Model
+## データモデル
 
-See `spec/db.md` for the full schema. Key tables:
+- `projects` — id, name, color, description
+- `tasks` — id, project_id, title, status(`todo`/`doing`/`done`), due_date, scheduled_for, completed_at
+- `task_notes` — id, task_id, body
 
-- `projects` — プロジェクト（name, color, description）
-- `tasks` — タスク（project_id, title, status, priority, due_date, scheduled_for, completed_at）
-- `task_notes` — タスクに紐づくメモ（task_id, body）
+## 開発ルール
 
-Task `status` values: `todo` / `doing` / `done`
-
-### API Actions
-
-See `spec/api.md`. Key operations:
-
-- Projects: create, list, update
-- Tasks: create, list by project, update, change status, list today tasks, list recent completed
-- Task Notes: create, list
-
-## Development Policy
-
-- 1タスクずつ進める（`tasks.md` で管理）
-- UXポリシー: 最小入力・シンプルさを優先（`spec/product.md` 参照）
-- 作業開始前に `tasks.md` の Doing を更新し、完了後に Done へ移動する
+- タスクは `tasks.md` で管理。作業前に Doing へ、完了後に Done へ移動する
+- DBスキーマ変更は必ずマイグレーションファイルで管理（`npx supabase migration new <name>`）
+- `supabaseAdmin`（service_role key）はサーバー側のみ。クライアントでは `supabase`（publishable key）を使う
+- コード変更後は `npm run build` でエラーがないことを確認する（lint はフックで自動実行される）

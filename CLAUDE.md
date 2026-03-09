@@ -33,6 +33,42 @@ npx supabase db push     # DBマイグレーションをリモートに適用
 - 新機能実装は `/implement-feature` スキルに従う。パターンは `/code-patterns` を参照
 - チェックポイント（`/rewind`）は git の代替ではない。節目ごとに git commit する
 
+## PR スクリーンショットワークフロー
+
+UI変更を含む PR では必ずスクリーンショットを生成し PR 本文に表示する。
+
+### 手順
+
+1. `npm run dev` でアプリを起動
+2. Playwright で主要画面を撮影（1440px幅・フルページ）
+
+```bash
+npx playwright screenshot --browser chromium --viewport-size "1440,900" --full-page \
+  http://localhost:3000/projects screenshots/pr-{PR_NUMBER}/projects.png
+```
+
+3. `screenshots/pr-{PR_NUMBER}/` に保存
+4. GitHub Pages にデプロイ（public リポジトリ必須）
+5. PR 本文の `## Screenshots` セクションを更新
+
+### PR 本文フォーマット
+
+```markdown
+## Screenshots
+
+### プロジェクト一覧
+![](https://tagty.github.io/taskflow/pr-{PR_NUMBER}/projects.png)
+
+### プロジェクト詳細
+![](https://tagty.github.io/taskflow/pr-{PR_NUMBER}/project-detail.png)
+```
+
+### ルール
+
+- UI変更がある場合は必ずスクリーンショットを更新する
+- フルページ・画面幅 1440px 固定
+- **注意**: private リポジトリでは GitHub Pages に有料プランが必要。public 化推奨。
+
 ## GitHub Workflow
 
 Claude は PM・Engineer・Reviewer として自走する。**必ず1タスクずつ進める。**

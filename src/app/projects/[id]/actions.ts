@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createTask, updateTask, updateTaskStatus, type Task } from "@/lib/supabase/queries";
+import { createTask, deleteTask, updateTask, updateTaskStatus, type Task } from "@/lib/supabase/queries";
 
 export async function createTaskAction(projectId: string, formData: FormData) {
   const title = formData.get("title") as string;
@@ -42,6 +42,11 @@ export async function updateTaskAction(
     : [];
 
   await updateTask(taskId, { title, due_date, tags });
+  revalidatePath(`/projects/${projectId}`);
+}
+
+export async function deleteTaskAction(projectId: string, taskId: string) {
+  await deleteTask(taskId);
   revalidatePath(`/projects/${projectId}`);
 }
 

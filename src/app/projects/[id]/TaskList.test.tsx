@@ -7,6 +7,7 @@ import type { Task } from "@/lib/supabase/queries";
 vi.mock("./actions", () => ({
   changeTaskStatusAction: vi.fn(),
   updateTaskAction: vi.fn().mockResolvedValue(undefined),
+  deleteTaskAction: vi.fn().mockResolvedValue(undefined),
 }));
 
 const baseTask: Task = {
@@ -67,6 +68,12 @@ describe("TaskList", () => {
     expect(screen.getByDisplayValue("テストタスク")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "保存" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "キャンセル" })).toBeInTheDocument();
+  });
+
+  it("編集フォームに削除ボタンを表示する", async () => {
+    render(<TaskList tasks={[baseTask]} projectId="proj-1" allTags={[]} />);
+    await userEvent.click(screen.getByRole("button", { name: "編集" }));
+    expect(screen.getByRole("button", { name: "削除" })).toBeInTheDocument();
   });
 
   it("キャンセルで編集フォームを閉じる", async () => {

@@ -89,6 +89,18 @@ export async function createTask(input: {
   return data;
 }
 
+export async function updateTask(
+  taskId: string,
+  input: { title: string; due_date: string | null; tags: string[] }
+): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from("tasks")
+    .update(input)
+    .eq("id", taskId);
+
+  if (error) throw error;
+}
+
 export type TaskWithProject = Task & { projects: Pick<Project, "name" | "color"> };
 
 export async function listTodayTasks(today: string): Promise<TaskWithProject[]> {

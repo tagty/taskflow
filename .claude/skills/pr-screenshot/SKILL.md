@@ -12,6 +12,8 @@ npx playwright screenshot --browser chromium --viewport-size "1440,900" --full-p
 
 ## デモ GIF
 
+**IMPORTANT: PR ごとに `scripts/record-pr-demo.js` をそのPRの機能に合わせて更新すること。**
+
 ```bash
 npm run dev &
 node scripts/record-pr-demo.js {PR_NUMBER} {PROJECT_ID}

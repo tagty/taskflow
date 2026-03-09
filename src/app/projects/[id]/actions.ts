@@ -6,11 +6,16 @@ import { createTask, updateTaskStatus, type Task } from "@/lib/supabase/queries"
 export async function createTaskAction(projectId: string, formData: FormData) {
   const title = formData.get("title") as string;
   const due_date = formData.get("due_date") as string;
+  const tagsRaw = formData.get("tags") as string;
+  const tags = tagsRaw
+    ? [...new Set(tagsRaw.split(",").map((t) => t.trim()).filter(Boolean))]
+    : [];
 
   await createTask({
     project_id: projectId,
     title,
     due_date: due_date || undefined,
+    tags,
   });
 
   revalidatePath(`/projects/${projectId}`);

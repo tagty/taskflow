@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createTask, updateTaskStatus, type Task } from "@/lib/supabase/queries";
+import { createTask, updateTask, updateTaskStatus, type Task } from "@/lib/supabase/queries";
 
 export async function createTaskAction(projectId: string, formData: FormData) {
   const title = formData.get("title") as string;
@@ -26,6 +26,24 @@ const NEXT_STATUS: Record<Task["status"], Task["status"]> = {
   doing: "done",
   done: "todo",
 };
+
+export async function updateTaskAction(
+  projectId: string,
+  taskId: string,
+  formData: FormData
+) {
+  const title = (formData.get("title") as string).trim();
+  if (!title) return;
+
+  const due_date = (formData.get("due_date") as string) || null;
+  const tagsRaw = formData.get("tags") as string;
+  const tags = tagsRaw
+    ? [...new Set(tagsRaw.split(",").map((t) => t.trim()).filter(Boolean))]
+    : [];
+
+  await updateTask(taskId, { title, due_date, tags });
+  revalidatePath(`/projects/${projectId}`);
+}
 
 export async function changeTaskStatusAction(
   projectId: string,

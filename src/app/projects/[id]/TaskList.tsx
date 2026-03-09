@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { type Task } from "@/lib/supabase/queries";
 import { TaskStatusButton } from "@/components/TaskStatusButton";
-import { changeTaskStatusAction, updateTaskAction } from "./actions";
+import { changeTaskStatusAction, deleteTaskAction, updateTaskAction } from "./actions";
 
 type Props = {
   tasks: Task[];
@@ -45,20 +45,33 @@ function TaskItem({ task, projectId }: { task: Task; projectId: string }) {
               className="flex-1 border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 focus:outline-none dark:text-gray-100 dark:placeholder-gray-500"
             />
           </div>
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-between">
             <button
               type="button"
-              onClick={() => setEditing(false)}
-              className="text-xs px-3 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-400 transition-colors"
+              onClick={async () => {
+                if (confirm(`「${task.title}」を削除しますか？`)) {
+                  await deleteTaskAction(projectId, task.id);
+                }
+              }}
+              className="text-xs px-3 py-1 rounded border border-red-200 dark:border-red-900 text-red-400 dark:text-red-500 hover:border-red-400 hover:text-red-600 transition-colors"
             >
-              キャンセル
+              削除
             </button>
-            <button
-              type="submit"
-              className="text-xs px-3 py-1 rounded bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors"
-            >
-              保存
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                className="text-xs px-3 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-400 transition-colors"
+              >
+                キャンセル
+              </button>
+              <button
+                type="submit"
+                className="text-xs px-3 py-1 rounded bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors"
+              >
+                保存
+              </button>
+            </div>
           </div>
         </form>
       </li>

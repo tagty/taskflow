@@ -89,6 +89,15 @@ export async function createTask(input: {
   return data;
 }
 
+export async function deleteTask(taskId: string): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from("tasks")
+    .delete()
+    .eq("id", taskId);
+
+  if (error) throw error;
+}
+
 export async function updateTask(
   taskId: string,
   input: { title: string; due_date: string | null; tags: string[] }

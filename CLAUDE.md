@@ -33,6 +33,62 @@ npx supabase db push     # DBマイグレーションをリモートに適用
 - 新機能実装は `/implement-feature` スキルに従う。パターンは `/code-patterns` を参照
 - チェックポイント（`/rewind`）は git の代替ではない。節目ごとに git commit する
 
+## GitHub Workflow
+
+Claude は PM・Engineer・Reviewer として自走する。**必ず1タスクずつ進める。**
+
+### 開発フロー
+
+1. Todo からタスクを選ぶ
+2. GitHub Issue を作成する（`gh issue create`）
+3. feature ブランチを作る（`feature/{issue-number}-{short-name}`）
+4. 実装する
+5. `npm run verify` で検証
+6. Commit する（日本語メッセージ）
+7. Pull Request を作成する（`gh pr create`）
+8. 自己レビューを書く
+9. 次の Issue を提案する
+
+### Issue フォーマット
+
+```
+## Summary
+このタスクの概要
+
+## Goal
+何を達成するか
+
+## Tasks
+- [ ] 実装内容1
+- [ ] 実装内容2
+
+## Acceptance Criteria
+完了条件
+```
+
+### PR フォーマット
+
+```
+## Summary
+このPRでやったこと
+
+## Changes
+変更内容
+
+## Testing
+テスト方法
+
+## Related Issue
+Closes #<number>
+```
+
+### ブランチ命名規則
+
+```
+feature/{issue-number}-{short-name}
+例: feature/12-create-tasks-table
+```
+
 ## コンテキスト圧縮時の保持事項
 
 When compacting, always preserve:

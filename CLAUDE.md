@@ -48,12 +48,13 @@ Issue 作成 → Branch → 実装 → verify → Commit → PR → スクリー
 2. `gh issue create` で Issue を作成する
 3. `feature/{issue-number}-{short-name}` ブランチを作る
 4. 実装する
-5. `npm run verify` で検証（必須）
-6. 日本語メッセージで Commit する
-7. `gh pr create` で PR を作成する
-8. UI変更があればスクリーンショット・GIF を撮影して PR に追加する
-9. 自己レビューを書く
-10. 次の Issue を提案する
+5. テストを書く（`src/**/*.test.{ts,tsx}`）
+6. `npm run verify` で検証（必須）
+7. 日本語メッセージで Commit する
+8. `gh pr create` で PR を作成する
+9. UI変更があればスクリーンショット・GIF を撮影して PR に追加する
+10. 自己レビューを書く
+11. 次の Issue を提案する
 
 ### Issue フォーマット
 

@@ -41,6 +41,7 @@ export type Task = {
   estimate_minutes: number | null;
   scheduled_for: string | null;
   completed_at: string | null;
+  tags: string[];
   created_at: string;
   updated_at: string;
 };
@@ -76,6 +77,7 @@ export async function createTask(input: {
   project_id: string;
   title: string;
   due_date?: string;
+  tags?: string[];
 }): Promise<Task> {
   const { data, error } = await supabaseAdmin
     .from("tasks")

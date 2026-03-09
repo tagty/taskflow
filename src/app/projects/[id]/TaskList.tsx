@@ -39,13 +39,6 @@ function TaskItem({ task, projectId }: { task: Task; projectId: string }) {
               className="border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 focus:outline-none"
             />
             <input
-              name="scheduled_for"
-              type="date"
-              title="予定日（Today に表示する日）"
-              defaultValue={task.scheduled_for ?? ""}
-              className="border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 focus:outline-none"
-            />
-            <input
               name="tags"
               defaultValue={task.tags.join(", ")}
               placeholder="タグ（カンマ区切り）"
@@ -91,11 +84,8 @@ function TaskItem({ task, projectId }: { task: Task; projectId: string }) {
           ))}
         </div>
       )}
-      {task.scheduled_for && (
-        <span className="text-xs text-blue-400 dark:text-blue-500 shrink-0">予定: {task.scheduled_for}</span>
-      )}
       {task.due_date && (
-        <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">期日: {task.due_date}</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{task.due_date}</span>
       )}
       <button
         onClick={() => setEditing(true)}

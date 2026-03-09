@@ -6,7 +6,6 @@ import { createTask, updateTask, updateTaskStatus, type Task } from "@/lib/supab
 export async function createTaskAction(projectId: string, formData: FormData) {
   const title = formData.get("title") as string;
   const due_date = formData.get("due_date") as string;
-  const scheduled_for = formData.get("scheduled_for") as string;
   const tagsRaw = formData.get("tags") as string;
   const tags = tagsRaw
     ? [...new Set(tagsRaw.split(",").map((t) => t.trim()).filter(Boolean))]
@@ -16,7 +15,6 @@ export async function createTaskAction(projectId: string, formData: FormData) {
     project_id: projectId,
     title,
     due_date: due_date || undefined,
-    scheduled_for: scheduled_for || undefined,
     tags,
   });
 
@@ -38,13 +36,12 @@ export async function updateTaskAction(
   if (!title) return;
 
   const due_date = (formData.get("due_date") as string) || null;
-  const scheduled_for = (formData.get("scheduled_for") as string) || null;
   const tagsRaw = formData.get("tags") as string;
   const tags = tagsRaw
     ? [...new Set(tagsRaw.split(",").map((t) => t.trim()).filter(Boolean))]
     : [];
 
-  await updateTask(taskId, { title, due_date, scheduled_for, tags });
+  await updateTask(taskId, { title, due_date, tags });
   revalidatePath(`/projects/${projectId}`);
 }
 

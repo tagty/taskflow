@@ -40,7 +40,18 @@ describe("TaskList", () => {
 
   it("期日を表示する", () => {
     render(<TaskList tasks={[baseTask]} projectId="proj-1" allTags={[]} />);
-    expect(screen.getByText("2026-03-10")).toBeInTheDocument();
+    expect(screen.getByText("期日: 2026-03-10")).toBeInTheDocument();
+  });
+
+  it("予定日を表示する", () => {
+    const task = { ...baseTask, scheduled_for: "2026-03-09" };
+    render(<TaskList tasks={[task]} projectId="proj-1" allTags={[]} />);
+    expect(screen.getByText("予定: 2026-03-09")).toBeInTheDocument();
+  });
+
+  it("予定日が未設定の場合は表示しない", () => {
+    render(<TaskList tasks={[baseTask]} projectId="proj-1" allTags={[]} />);
+    expect(screen.queryByText(/予定:/)).not.toBeInTheDocument();
   });
 
   it("タグフィルターボタンを表示する", () => {

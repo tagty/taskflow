@@ -43,6 +43,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <input
             name="due_date"
             type="date"
+            title="期日"
+            className="border border-gray-200 dark:border-gray-700 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 text-gray-500 dark:text-gray-400"
+          />
+          <input
+            name="scheduled_for"
+            type="date"
+            title="予定日（Today に表示する日）"
             className="border border-gray-200 dark:border-gray-700 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 text-gray-500 dark:text-gray-400"
           />
           <button

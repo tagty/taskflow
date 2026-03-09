@@ -77,6 +77,7 @@ export async function createTask(input: {
   project_id: string;
   title: string;
   due_date?: string;
+  scheduled_for?: string;
   tags?: string[];
 }): Promise<Task> {
   const { data, error } = await supabaseAdmin
@@ -91,7 +92,7 @@ export async function createTask(input: {
 
 export async function updateTask(
   taskId: string,
-  input: { title: string; due_date: string | null; tags: string[] }
+  input: { title: string; due_date: string | null; scheduled_for: string | null; tags: string[] }
 ): Promise<void> {
   const { error } = await supabaseAdmin
     .from("tasks")

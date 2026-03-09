@@ -2,7 +2,7 @@ const { chromium } = require("playwright");
 const path = require("path");
 const fs = require("fs");
 
-const PR_NUMBER = process.argv[2] || "3";
+const PR_NUMBER = process.argv[2] || "5";
 const PROJECT_ID = process.argv[3] || "0b5f4e26-ccfd-47c6-a934-27fc3e745031";
 const OUT_DIR = path.join("screenshots", `pr-${PR_NUMBER}`);
 
@@ -21,25 +21,29 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(800);
 
-  // 最初のタスクの編集ボタンをホバーで表示させてクリック
-  const firstTask = page.locator("li").filter({ hasText: "タスク編集機能" }).first();
-  await firstTask.hover();
+  // タスク作成フォームで予定日を設定
+  await page.fill('input[name="title"]', "予定日設定のデモタスク");
+  await page.waitForTimeout(300);
+  await page.fill('input[name="scheduled_for"]', "2026-03-09");
+  await page.waitForTimeout(300);
+  await page.fill('input[name="tags"]', "demo");
+  await page.waitForTimeout(300);
+  await page.click('button[type="submit"]');
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(800);
+
+  // 作成したタスクをホバーして編集ボタンを表示
+  const newTask = page.locator("li").filter({ hasText: "予定日設定のデモタスク" }).first();
+  await newTask.hover();
   await page.waitForTimeout(400);
-  const editBtn = firstTask.getByRole("button", { name: "編集" });
-  await editBtn.click();
+  await newTask.getByRole("button", { name: "編集" }).click();
   await page.waitForTimeout(600);
 
-  // 編集フォームが表示されるまで待機して入力
-  const titleInput = page.locator("li form input[name='title']").first();
-  await titleInput.waitFor();
-  await titleInput.fill("タスク編集機能を実装する（編集済み）");
+  // 編集フォームで予定日を変更
+  const scheduledInput = page.locator("li form input[name='scheduled_for']").first();
+  await scheduledInput.waitFor();
+  await scheduledInput.fill("2026-03-10");
   await page.waitForTimeout(400);
-
-  const tagsInput = page.locator("li form input[name='tags']").first();
-  await tagsInput.fill("feature, ui, done");
-  await page.waitForTimeout(400);
-
-  // 保存
   await page.getByRole("button", { name: "保存" }).click();
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(800);
@@ -47,7 +51,6 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
   await context.close();
   await browser.close();
 
-  // webm ファイルのパスを出力
   const files = fs.readdirSync(OUT_DIR).filter((f) => f.endsWith(".webm"));
   if (files.length > 0) {
     console.log(path.join(OUT_DIR, files[files.length - 1]));

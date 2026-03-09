@@ -34,6 +34,7 @@ function TaskItem({ task, projectId }: { task: Task; projectId: string }) {
             <input
               name="due_date"
               type="date"
+              title="期日"
               defaultValue={task.due_date ?? ""}
               className="border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 focus:outline-none"
             />

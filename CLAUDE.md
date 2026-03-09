@@ -5,42 +5,20 @@ Personal Dev OS — 個人向けタスク管理アプリ。
 ## コマンド
 
 ```bash
-npm run dev           # 開発サーバー起動
-npm run build         # ビルド（実装後に必ず実行して検証する）
-npm run lint          # ESLint
-npm run test          # Vitest ユニットテスト
-npm run test:e2e      # Playwright スクリーンショット比較
+npm run verify           # ビルド + テスト（タスク完了後に必ず実行）
+npm run test:e2e         # Playwright スクリーンショット比較（UI変更後）
 npm run test:e2e:update  # スクリーンショットのベースライン更新
-npx supabase db push  # DBマイグレーションをリモートに適用
+npx supabase db push     # DBマイグレーションをリモートに適用
+./scripts/review-pr.sh   # PR差分を claude -p で自動レビュー
+./scripts/fix-lint.sh    # lint エラーを自律修正
 ```
-
-## UI検証ワークフロー
-
-`claude --chrome` で起動すると Chrome を直接操作できる。UI変更後の検証例：
-- `localhost:3000 を開いてプロジェクト作成フォームをテストして。コンソールエラーも確認して`
-- `UIを変更したので localhost:3000 のスクリーンショットを撮って tests/visual.spec.ts-snapshots/ と比較して`
 
 ## アーキテクチャ
 
 - **フレームワーク**: Next.js App Router + TypeScript
 - **DB**: Supabase (PostgreSQL) — `src/lib/supabase/queries.ts` にクエリを集約
-- **スタイル**: Tailwind CSS
-- **サーバーアクション**: 各ページの `actions.ts` に定義（`"use server"`）
-- **共通コンポーネント**: `src/components/`
-
-## ディレクトリ構造
-
-```
-src/
-  app/
-    projects/         # プロジェクト一覧・作成
-    projects/[id]/    # プロジェクト詳細・タスク管理
-    today/            # 今日のタスク
-    history/          # 完了履歴
-  components/         # 共有UIコンポーネント
-  lib/supabase/       # client.ts / admin.ts / queries.ts
-supabase/migrations/  # DBマイグレーションファイル
-```
+- **スタイル**: Tailwind CSS（ダークモード `dark:` 対応必須）
+- **サーバーアクション**: 各ページの `actions.ts`（`"use server"` 必須）
 
 ## データモデル
 
@@ -50,7 +28,14 @@ supabase/migrations/  # DBマイグレーションファイル
 
 ## 開発ルール
 
-- タスクは `tasks.md` で管理。作業前に Doing へ、完了後に Done へ移動する
-- DBスキーマ変更は必ずマイグレーションファイルで管理（`npx supabase migration new <name>`）
-- `supabaseAdmin`（service_role key）はサーバー側のみ。クライアントでは `supabase`（publishable key）を使う
-- コード変更後は `npm run build` でエラーがないことを確認する（lint はフックで自動実行される）
+- `supabaseAdmin`（secret key）はサーバー側のみ。クライアントでは `supabase`（publishable key）
+- DBスキーマ変更は `npx supabase migration new <name>` でマイグレーションファイルを作成
+- 新機能実装は `/implement-feature` スキルに従う。パターンは `/code-patterns` を参照
+- チェックポイント（`/rewind`）は git の代替ではない。節目ごとに git commit する
+
+## コンテキスト圧縮時の保持事項
+
+When compacting, always preserve:
+- 変更・追加したファイルの一覧
+- 未完了のタスクと次のステップ
+- DBマイグレーションの適用状況

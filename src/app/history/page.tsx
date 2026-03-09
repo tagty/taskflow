@@ -20,8 +20,8 @@ export default async function HistoryPage() {
       </div>
 
       <nav className="flex gap-4 text-sm mb-8">
-        <Link href="/projects" className="text-gray-400 hover:text-gray-600">プロジェクト</Link>
-        <Link href="/today" className="text-gray-400 hover:text-gray-600">Today</Link>
+        <Link href="/projects" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">プロジェクト</Link>
+        <Link href="/today" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">Today</Link>
         <span className="font-medium">履歴</span>
       </nav>
 
@@ -31,23 +31,23 @@ export default async function HistoryPage() {
         <div className="space-y-6">
           {Object.entries(grouped).map(([date, items]) => (
             <section key={date}>
-              <h2 className="text-sm font-medium text-gray-500 mb-2">{date}</h2>
+              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{date}</h2>
               <ul className="space-y-2">
                 {items.map((task) => (
                   <li
                     key={task.id}
-                    className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200"
+                    className="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700"
                   >
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
                       完了
                     </span>
-                    <span className="text-sm flex-1 text-gray-500 line-through">{task.title}</span>
+                    <span className="text-sm flex-1 text-gray-500 dark:text-gray-400 line-through">{task.title}</span>
                     <div className="flex items-center gap-2 ml-auto">
                       <span
                         className="w-2 h-2 rounded-full"
                         style={{ backgroundColor: task.projects.color ?? "#6b7280" }}
                       />
-                      <span className="text-xs text-gray-400">{task.projects.name}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500">{task.projects.name}</span>
                     </div>
                   </li>
                 ))}

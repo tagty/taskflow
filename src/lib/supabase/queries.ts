@@ -113,12 +113,29 @@ export async function updateTask(
 export type TaskWithProject = Task & { projects: Pick<Project, "name" | "color"> };
 
 export async function listTodayTasks(today: string): Promise<TaskWithProject[]> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(today)) throw new Error("Invalid date format");
+
   const { data, error } = await supabaseAdmin
     .from("tasks")
     .select("*, projects(name, color)")
     .neq("status", "done")
     .or(`scheduled_for.eq.${today},due_date.eq.${today}`)
     .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function listStalledTasks(thresholdDays = 3): Promise<TaskWithProject[]> {
+  const threshold = new Date();
+  threshold.setDate(threshold.getDate() - thresholdDays);
+
+  const { data, error } = await supabaseAdmin
+    .from("tasks")
+    .select("*, projects(name, color)")
+    .eq("status", "doing")
+    .lt("updated_at", threshold.toISOString())
+    .order("updated_at", { ascending: true });
 
   if (error) throw error;
   return data;

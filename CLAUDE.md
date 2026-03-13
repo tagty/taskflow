@@ -24,7 +24,21 @@ node scripts/record-pr-demo.js {PR番号} {PROJECT_ID}  # デモ GIF 生成 → 
 
 ## 開発フロー
 
-Issue → `feature/{issue-number}-{name}` ブランチ → 実装 → テスト → `npm run verify` → commit（日本語） → PR → スクリーンショット/GIF → 次の Issue 提案
+### 小〜中規模（通常）
+
+Issue → `feature/{issue-number}-{name}` ブランチ → 実装 → `/self-review` → `npm run verify` → commit（日本語） → PR → スクリーンショット/GIF → 次の Issue 提案
+
+### 中〜大規模（tsumiki を使う）
+
+Issue → ブランチ → `/kairo-requirements` → `/kairo-design` → `/kairo-tasks` → `/kairo-implement` → `/self-review` → `npm run verify` → commit → PR → スクリーンショット/GIF
+
+| スキル | タイミング | 目的 |
+|---|---|---|
+| `/kairo-requirements` | 実装前 | 要件を EARS 記法で整理 |
+| `/kairo-design` | 要件確定後 | 設計文書・DB スキーマ生成 |
+| `/kairo-tasks` | 設計確定後 | タスクを1日単位に分割 |
+| `/kairo-implement` | 実装中 | TDD（red→green→refactor）で実装 |
+| `/self-review` | PR 作成前 | 規約・品質・要件の自動チェック |
 
 - PR には `## Demo` と `## Screenshots` セクションを必ず追加（`/pr-screenshot` スキルを参照）
 - Issue・PR のフォーマットは `/github-workflow` スキルを参照

@@ -12,12 +12,21 @@ export async function createTaskAction(projectId: string, formData: FormData) {
     ? [...new Set(tagsRaw.split(",").map((t) => t.trim()).filter(Boolean))]
     : [];
 
+  const priorityRaw = formData.get("priority") as string;
+  const priorityParsed = priorityRaw ? parseInt(priorityRaw, 10) : undefined;
+  const priority = priorityParsed !== undefined && !isNaN(priorityParsed) && priorityParsed >= 1 && priorityParsed <= 5 ? priorityParsed : undefined;
+  const estimateRaw = formData.get("estimate_minutes") as string;
+  const estimateParsed = estimateRaw ? parseInt(estimateRaw, 10) : undefined;
+  const estimate_minutes = estimateParsed !== undefined && !isNaN(estimateParsed) && estimateParsed >= 0 ? estimateParsed : undefined;
+
   await createTask({
     project_id: projectId,
     title,
     description,
     due_date: due_date || undefined,
     tags,
+    priority,
+    estimate_minutes,
   });
 
   revalidatePath(`/projects/${projectId}`);
@@ -43,8 +52,14 @@ export async function updateTaskAction(
   const tags = tagsRaw
     ? [...new Set(tagsRaw.split(",").map((t) => t.trim()).filter(Boolean))]
     : [];
+  const priorityRaw = formData.get("priority") as string;
+  const priorityParsed = priorityRaw ? parseInt(priorityRaw, 10) : null;
+  const priority = priorityParsed !== null && !isNaN(priorityParsed) && priorityParsed >= 1 && priorityParsed <= 5 ? priorityParsed : null;
+  const estimateRaw = formData.get("estimate_minutes") as string;
+  const estimateParsed = estimateRaw ? parseInt(estimateRaw, 10) : null;
+  const estimate_minutes = estimateParsed !== null && !isNaN(estimateParsed) && estimateParsed >= 0 ? estimateParsed : null;
 
-  await updateTask(taskId, { title, description, due_date, tags });
+  await updateTask(taskId, { title, description, due_date, tags, priority, estimate_minutes });
   revalidatePath(`/projects/${projectId}`);
 }
 

@@ -79,6 +79,8 @@ export async function createTask(input: {
   description?: string;
   due_date?: string;
   tags?: string[];
+  priority?: number;
+  estimate_minutes?: number;
 }): Promise<Task> {
   const { data, error } = await supabaseAdmin
     .from("tasks")
@@ -101,7 +103,7 @@ export async function deleteTask(taskId: string): Promise<void> {
 
 export async function updateTask(
   taskId: string,
-  input: { title: string; description: string | null; due_date: string | null; tags: string[] }
+  input: { title: string; description: string | null; due_date: string | null; tags: string[]; priority: number | null; estimate_minutes: number | null }
 ): Promise<void> {
   const { error } = await supabaseAdmin
     .from("tasks")

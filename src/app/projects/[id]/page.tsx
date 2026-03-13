@@ -24,9 +24,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="mb-6">
-        <Link href="/projects" className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <Link href="/projects" className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
           ← プロジェクト一覧
         </Link>
+
       </div>
 
       <div className="flex items-center gap-3 mb-8">
@@ -52,6 +53,23 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             name="due_date"
             type="date"
             className="border border-gray-200 dark:border-gray-700 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 text-gray-500 dark:text-gray-400"
+          />
+          <input
+            name="priority"
+            type="number"
+            min={1}
+            max={5}
+            placeholder="P"
+            title="優先度（1〜5）"
+            className="w-16 border border-gray-200 dark:border-gray-700 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 text-gray-500 dark:text-gray-400 dark:placeholder-gray-600"
+          />
+          <input
+            name="estimate_minutes"
+            type="number"
+            min={0}
+            placeholder="分"
+            title="見積時間（分）"
+            className="w-20 border border-gray-200 dark:border-gray-700 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 text-gray-500 dark:text-gray-400 dark:placeholder-gray-600"
           />
           <button
             type="submit"

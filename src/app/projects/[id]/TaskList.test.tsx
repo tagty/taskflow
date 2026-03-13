@@ -85,6 +85,63 @@ describe("TaskList", () => {
     expect(screen.queryByRole("button", { name: "保存" })).not.toBeInTheDocument();
   });
 
+  it("priority がある場合、P{n} バッジを表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, priority: 2 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("P2")).toBeInTheDocument();
+  });
+
+  it("priority が null の場合、バッジを表示しない", () => {
+    render(<TaskList tasks={[{ ...baseTask, priority: null }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.queryByText(/^P\d/)).not.toBeInTheDocument();
+  });
+
+  it("estimate_minutes=90 の場合、1h30m と表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, estimate_minutes: 90 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("1h30m")).toBeInTheDocument();
+  });
+
+  it("estimate_minutes=60 の場合、1h と表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, estimate_minutes: 60 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("1h")).toBeInTheDocument();
+  });
+
+  it("estimate_minutes=30 の場合、30m と表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, estimate_minutes: 30 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("30m")).toBeInTheDocument();
+  });
+
+  it("estimate_minutes が null の場合、見積時間を表示しない", () => {
+    render(<TaskList tasks={[{ ...baseTask, estimate_minutes: null }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.queryByText(/h|m$/)).not.toBeInTheDocument();
+  });
+
+  it("estimate_minutes=0 の場合、0m と表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, estimate_minutes: 0 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("0m")).toBeInTheDocument();
+  });
+
+  it("estimate_minutes=120 の場合、2h と表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, estimate_minutes: 120 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("2h")).toBeInTheDocument();
+  });
+
+  it("priority=1（最小値）を表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, priority: 1 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("P1")).toBeInTheDocument();
+  });
+
+  it("priority=5（最大値）を表示する", () => {
+    render(<TaskList tasks={[{ ...baseTask, priority: 5 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.getByText("P5")).toBeInTheDocument();
+  });
+
+  it("編集フォームに priority・estimate_minutes の入力欄を表示する", async () => {
+    render(<TaskList tasks={[{ ...baseTask, priority: 3, estimate_minutes: 45 }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    await userEvent.click(screen.getByRole("button", { name: "編集" }));
+    expect(screen.getByTitle("優先度（1〜5）")).toHaveValue(3);
+    expect(screen.getByTitle("見積時間（分）")).toHaveValue(45);
+  });
+
   it("description が null の場合、詳細説明を表示しない", () => {
     render(<TaskList tasks={[{ ...baseTask, description: null }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
     expect(screen.queryByText(/詳細/)).not.toBeInTheDocument();

@@ -25,15 +25,22 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(1000);
 
-  // タスク作成フォームに title と description を入力
+  // タスク作成フォームに title・priority・estimate_minutes を入力
   const titleInput = page.locator("input[name='title']").first();
-  await titleInput.fill("description 機能のテスト");
+  await titleInput.fill("優先度と見積時間のテスト");
   await page.waitForTimeout(500);
 
-  const descInput = page.locator("textarea[name='description']").first();
-  await descInput.fill("詳細説明のサンプルです。\n複数行にも対応しています。");
-  await page.waitForTimeout(1000);
+  const priorityInput = page.locator("input[name='priority']").first();
+  await priorityInput.fill("2");
+  await page.waitForTimeout(300);
 
+  const estimateInput = page.locator("input[name='estimate_minutes']").first();
+  await estimateInput.fill("90");
+  await page.waitForTimeout(500);
+
+  // フォームを送信
+  await page.locator("button[type='submit']").first().click();
+  await page.waitForLoadState("networkidle");
   await page.waitForTimeout(1500);
 
   await context.close();

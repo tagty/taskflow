@@ -15,7 +15,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   if (!project) notFound();
 
   const allTags = [...new Set(tasks.flatMap((t) => t.tags))].sort();
-  const notesByTaskId = Object.groupBy(notes, (n) => n.task_id) as Record<string, TaskNote[]>;
+  const notesByTaskId = notes.reduce<Record<string, TaskNote[]>>((acc, n) => {
+    (acc[n.task_id] ??= []).push(n);
+    return acc;
+  }, {});
   const createTaskForProject = createTaskAction.bind(null, id);
 
   return (

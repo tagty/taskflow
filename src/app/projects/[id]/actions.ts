@@ -5,6 +5,7 @@ import { createTask, createTaskNote, deleteTask, updateTask, updateTaskStatus, t
 
 export async function createTaskAction(projectId: string, formData: FormData) {
   const title = formData.get("title") as string;
+  const description = (formData.get("description") as string) || undefined;
   const due_date = formData.get("due_date") as string;
   const tagsRaw = formData.get("tags") as string;
   const tags = tagsRaw
@@ -14,6 +15,7 @@ export async function createTaskAction(projectId: string, formData: FormData) {
   await createTask({
     project_id: projectId,
     title,
+    description,
     due_date: due_date || undefined,
     tags,
   });
@@ -35,13 +37,14 @@ export async function updateTaskAction(
   const title = (formData.get("title") as string).trim();
   if (!title) return;
 
+  const description = (formData.get("description") as string) || null;
   const due_date = (formData.get("due_date") as string) || null;
   const tagsRaw = formData.get("tags") as string;
   const tags = tagsRaw
     ? [...new Set(tagsRaw.split(",").map((t) => t.trim()).filter(Boolean))]
     : [];
 
-  await updateTask(taskId, { title, due_date, tags });
+  await updateTask(taskId, { title, description, due_date, tags });
   revalidatePath(`/projects/${projectId}`);
 }
 

@@ -16,32 +16,16 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
   });
   const page = await context.newPage();
 
-  const projectUrl = PROJECT_ID
-    ? `http://localhost:3000/projects/${PROJECT_ID}`
-    : "http://localhost:3000/projects";
-
-  // プロジェクト詳細ページへ移動
-  await page.goto(projectUrl);
-  await page.waitForLoadState("networkidle");
-  await page.waitForTimeout(1000);
-
-  // タスク作成フォームに title・priority・estimate_minutes を入力
-  const titleInput = page.locator("input[name='title']").first();
-  await titleInput.fill("優先度と見積時間のテスト");
-  await page.waitForTimeout(500);
-
-  const priorityInput = page.locator("input[name='priority']").first();
-  await priorityInput.fill("2");
-  await page.waitForTimeout(300);
-
-  const estimateInput = page.locator("input[name='estimate_minutes']").first();
-  await estimateInput.fill("90");
-  await page.waitForTimeout(500);
-
-  // フォームを送信
-  await page.locator("button[type='submit']").first().click();
+  // Today ページへ移動
+  await page.goto("http://localhost:3000/today");
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(1500);
+
+  // スクロールして全体を確認
+  await page.evaluate(() => window.scrollTo(0, 300));
+  await page.waitForTimeout(1000);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(1000);
 
   await context.close();
   await browser.close();

@@ -123,6 +123,7 @@ export async function listTodayTasks(today: string): Promise<TaskWithProject[]> 
     .select("*, projects(name, color)")
     .neq("status", "done")
     .or(`scheduled_for.eq.${today},due_date.eq.${today}`)
+    .order("priority", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false });
 
   if (error) throw error;

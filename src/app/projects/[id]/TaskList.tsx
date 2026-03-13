@@ -24,6 +24,13 @@ function TaskItem({
   const [editing, setEditing] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
 
+  function formatEstimate(minutes: number): string {
+    if (minutes < 60) return `${minutes}m`;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m === 0 ? `${h}h` : `${h}h${m}m`;
+  }
+
   if (editing) {
     const action = async (formData: FormData) => {
       await updateTaskAction(projectId, task.id, formData);
@@ -61,6 +68,25 @@ function TaskItem({
               placeholder="タグ（カンマ区切り）"
               className="flex-1 border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 focus:outline-none dark:text-gray-100 dark:placeholder-gray-500"
             />
+            <input
+              name="priority"
+              type="number"
+              min={1}
+              max={5}
+              defaultValue={task.priority ?? ""}
+              placeholder="P"
+              title="優先度（1〜5）"
+              className="w-14 border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 focus:outline-none dark:placeholder-gray-600"
+            />
+            <input
+              name="estimate_minutes"
+              type="number"
+              min={0}
+              defaultValue={task.estimate_minutes ?? ""}
+              placeholder="分"
+              title="見積時間（分）"
+              className="w-16 border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 focus:outline-none dark:placeholder-gray-600"
+            />
           </div>
           <div className="flex gap-2 justify-between">
             <button
@@ -70,7 +96,7 @@ function TaskItem({
                   await deleteTaskAction(projectId, task.id);
                 }
               }}
-              className="text-xs px-3 py-1 rounded border border-red-200 dark:border-red-900 text-red-400 dark:text-red-500 hover:border-red-400 hover:text-red-600 transition-colors"
+              className="text-xs px-3 py-1 rounded border border-red-200 dark:border-red-900 text-red-400 dark:text-red-500 hover:border-red-400 hover:text-red-600 dark:hover:border-red-700 dark:hover:text-red-400 transition-colors"
             >
               削除
             </button>
@@ -78,7 +104,7 @@ function TaskItem({
               <button
                 type="button"
                 onClick={() => setEditing(false)}
-                className="text-xs px-3 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-400 transition-colors"
+                className="text-xs px-3 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600 transition-colors"
               >
                 キャンセル
               </button>
@@ -110,6 +136,16 @@ function TaskItem({
             <span className="block text-xs text-gray-400 dark:text-gray-500 mt-0.5 whitespace-pre-wrap">{task.description}</span>
           )}
         </span>
+        {task.priority != null && (
+          <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 shrink-0">
+            P{task.priority}
+          </span>
+        )}
+        {task.estimate_minutes != null && (
+          <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">
+            {formatEstimate(task.estimate_minutes)}
+          </span>
+        )}
         {task.tags.length > 0 && (
           <div className="flex gap-1 flex-wrap">
             {task.tags.map((tag) => (
@@ -191,7 +227,7 @@ export function TaskList({ tasks, projectId, allTags, notesByTaskId }: Props) {
             className={`text-xs px-2 py-1 rounded-full border transition-colors ${
               selectedTag === null
                 ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 border-transparent"
-                : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400"
+                : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
             }`}
           >
             すべて
@@ -203,7 +239,7 @@ export function TaskList({ tasks, projectId, allTags, notesByTaskId }: Props) {
               className={`text-xs px-2 py-1 rounded-full border transition-colors ${
                 selectedTag === tag
                   ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 border-transparent"
-                  : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400"
+                  : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
               }`}
             >
               {tag}

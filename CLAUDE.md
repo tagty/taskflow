@@ -24,13 +24,9 @@ node scripts/record-pr-demo.js {PR番号} {PROJECT_ID}  # デモ GIF 生成 → 
 
 ## 開発フロー
 
-### 小〜中規模（通常）
+**必ず tsumiki を使う。** 規模に関わらず以下のフローを遵守する。
 
-Issue → `feature/{issue-number}-{name}` ブランチ → 実装 → `/self-review` → `npm run verify` → commit（日本語） → PR → スクリーンショット/GIF → 次の Issue 提案
-
-### 中〜大規模（tsumiki を使う）
-
-Issue → ブランチ → `/kairo-requirements` → `/kairo-design` → `/kairo-tasks` → `/kairo-implement` → `/self-review` → `npm run verify` → commit → PR → スクリーンショット/GIF
+Issue → `feature/{issue-number}-{name}` ブランチ → `/kairo-requirements` → `/kairo-design` → `/kairo-tasks` → `/kairo-implement` → `/self-review` → `npm run verify` → commit（日本語） → PR → スクリーンショット/GIF → 次の Issue 提案
 
 | スキル | タイミング | 目的 |
 |---|---|---|

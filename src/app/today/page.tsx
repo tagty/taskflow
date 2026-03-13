@@ -3,9 +3,18 @@ import { listTodayTasks, listStalledTasks } from "@/lib/supabase/queries";
 import { TaskStatusButton } from "@/components/TaskStatusButton";
 import { changeTaskStatusAction } from "./actions";
 
+const OVERLOAD_THRESHOLD = 480; // 8h in minutes
+
 function stalledDays(updatedAt: string): number {
   const diff = Date.now() - new Date(updatedAt).getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function formatEstimate(minutes: number): string {
+  if (minutes < 60) return `${minutes}m`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m === 0 ? `${h}h` : `${h}h${m}m`;
 }
 
 export default async function TodayPage() {
@@ -14,6 +23,11 @@ export default async function TodayPage() {
     listTodayTasks(today),
     listStalledTasks(3),
   ]);
+
+  // 見積時間合計
+  const totalMinutes = tasks.reduce((sum, t) => sum + (t.estimate_minutes ?? 0), 0);
+  const hasEstimate = tasks.some((t) => t.estimate_minutes != null);
+  const isOverloaded = totalMinutes > OVERLOAD_THRESHOLD;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -64,7 +78,15 @@ export default async function TodayPage() {
       )}
 
       <section>
-        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">今日のタスク</h2>
+        <div className="flex items-center gap-3 mb-3">
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400">今日のタスク</h2>
+          {hasEstimate && (
+            <span className={`text-xs font-medium ${isOverloaded ? "text-red-500 dark:text-red-400" : "text-gray-400 dark:text-gray-500"}`}>
+              合計 {formatEstimate(totalMinutes)}
+              {isOverloaded && " ⚠ 過負荷"}
+            </span>
+          )}
+        </div>
         {tasks.length === 0 ? (
           <p className="text-gray-400 text-sm">今日のタスクはありません</p>
         ) : (
@@ -80,6 +102,16 @@ export default async function TodayPage() {
                 />
                 <span className="text-sm flex-1">{task.title}</span>
                 <div className="flex items-center gap-2 ml-auto">
+                  {task.priority != null && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                      P{task.priority}
+                    </span>
+                  )}
+                  {task.estimate_minutes != null && (
+                    <span className="text-xs text-gray-400 dark:text-gray-500">
+                      {formatEstimate(task.estimate_minutes)}
+                    </span>
+                  )}
                   <span
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: task.projects.color ?? "#6b7280" }}

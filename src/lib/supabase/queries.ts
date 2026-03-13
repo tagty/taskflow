@@ -153,6 +153,46 @@ export async function listRecentCompleted(limit = 30): Promise<TaskWithProject[]
   return data;
 }
 
+export type TaskNote = {
+  id: string;
+  task_id: string;
+  body: string;
+  created_at: string;
+};
+
+export async function listTaskNotesByProject(projectId: string): Promise<TaskNote[]> {
+  const taskIds = await supabaseAdmin
+    .from("tasks")
+    .select("id")
+    .eq("project_id", projectId);
+
+  if (taskIds.error) throw taskIds.error;
+  if (taskIds.data.length === 0) return [];
+
+  const { data, error } = await supabaseAdmin
+    .from("task_notes")
+    .select("*")
+    .in("task_id", taskIds.data.map((t) => t.id))
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function createTaskNote(input: {
+  task_id: string;
+  body: string;
+}): Promise<TaskNote> {
+  const { data, error } = await supabaseAdmin
+    .from("task_notes")
+    .insert(input)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
 export async function createProject(input: {
   name: string;
   description?: string;

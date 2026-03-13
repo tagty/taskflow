@@ -1,16 +1,24 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProject, listTasksByProject } from "@/lib/supabase/queries";
+import { getProject, listTasksByProject, listTaskNotesByProject, type TaskNote } from "@/lib/supabase/queries";
 import { createTaskAction } from "./actions";
 import { TaskList } from "./TaskList";
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [project, tasks] = await Promise.all([getProject(id), listTasksByProject(id)]);
+  const [project, tasks, notes] = await Promise.all([
+    getProject(id),
+    listTasksByProject(id),
+    listTaskNotesByProject(id),
+  ]);
 
   if (!project) notFound();
 
   const allTags = [...new Set(tasks.flatMap((t) => t.tags))].sort();
+  const notesByTaskId = notes.reduce<Record<string, TaskNote[]>>((acc, n) => {
+    (acc[n.task_id] ??= []).push(n);
+    return acc;
+  }, {});
   const createTaskForProject = createTaskAction.bind(null, id);
 
   return (
@@ -59,7 +67,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         />
       </form>
 
-      <TaskList tasks={tasks} projectId={id} allTags={allTags} />
+      <TaskList tasks={tasks} projectId={id} allTags={allTags} notesByTaskId={notesByTaskId} />
     </div>
   );
 }

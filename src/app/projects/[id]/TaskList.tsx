@@ -40,6 +40,13 @@ function TaskItem({
             autoFocus
             className="w-full border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:text-gray-100"
           />
+          <textarea
+            name="description"
+            defaultValue={task.description ?? ""}
+            placeholder="詳細説明（任意）"
+            rows={2}
+            className="w-full border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:text-gray-100 dark:placeholder-gray-500 resize-none"
+          />
           <div className="flex gap-2">
             <input
               name="due_date"
@@ -97,7 +104,12 @@ function TaskItem({
           status={task.status}
           action={changeTaskStatusAction.bind(null, projectId, task.id, task.status)}
         />
-        <span className="text-sm flex-1">{task.title}</span>
+        <span className="text-sm flex-1">
+          {task.title}
+          {task.description && (
+            <span className="block text-xs text-gray-400 dark:text-gray-500 mt-0.5 whitespace-pre-wrap">{task.description}</span>
+          )}
+        </span>
         {task.tags.length > 0 && (
           <div className="flex gap-1 flex-wrap">
             {task.tags.map((tag) => (

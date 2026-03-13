@@ -76,6 +76,7 @@ export async function updateTaskStatus(
 export async function createTask(input: {
   project_id: string;
   title: string;
+  description?: string;
   due_date?: string;
   tags?: string[];
 }): Promise<Task> {
@@ -100,7 +101,7 @@ export async function deleteTask(taskId: string): Promise<void> {
 
 export async function updateTask(
   taskId: string,
-  input: { title: string; due_date: string | null; tags: string[] }
+  input: { title: string; description: string | null; due_date: string | null; tags: string[] }
 ): Promise<void> {
   const { error } = await supabaseAdmin
     .from("tasks")

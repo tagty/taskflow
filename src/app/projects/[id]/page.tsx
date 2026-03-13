@@ -65,6 +65,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           placeholder="タグ（カンマ区切り、例: bug, urgent）"
           className="border border-gray-200 dark:border-gray-700 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 dark:text-gray-100 dark:placeholder-gray-500"
         />
+        <textarea
+          name="description"
+          placeholder="詳細説明（任意）"
+          rows={2}
+          className="border border-gray-200 dark:border-gray-700 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 dark:text-gray-100 dark:placeholder-gray-500 resize-none"
+        />
       </form>
 
       <TaskList tasks={tasks} projectId={id} allTags={allTags} notesByTaskId={notesByTaskId} />

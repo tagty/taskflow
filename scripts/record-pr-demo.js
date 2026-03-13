@@ -2,7 +2,8 @@ const { chromium } = require("playwright");
 const path = require("path");
 const fs = require("fs");
 
-const PR_NUMBER = process.argv[2] || "9";
+const PR_NUMBER = process.argv[2] || "14";
+const PROJECT_ID = process.argv[3];
 const OUT_DIR = path.join("screenshots", `pr-${PR_NUMBER}`);
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -15,15 +16,35 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
   });
   const page = await context.newPage();
 
-  // /today ページへ移動・滞留中セクションを表示
-  await page.goto("http://localhost:3000/today");
-  await page.waitForLoadState("networkidle");
-  await page.waitForTimeout(2000);
+  const projectUrl = PROJECT_ID
+    ? `http://localhost:3000/projects/${PROJECT_ID}`
+    : "http://localhost:3000/projects";
 
-  // 滞留タスクのバッジにフォーカス
-  const badge = page.locator("text=4日滞留").first();
-  await badge.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(2000);
+  // プロジェクト詳細ページへ移動
+  await page.goto(projectUrl);
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500);
+
+  // タスクカードにホバーしてメモボタンを表示
+  const taskItem = page.locator("li").first();
+  await taskItem.hover();
+  await page.waitForTimeout(1000);
+
+  // メモボタンをクリックして展開
+  const memoBtn = page.locator("button[aria-label='メモ']").first();
+  if (await memoBtn.isVisible()) {
+    await memoBtn.click();
+    await page.waitForTimeout(1000);
+
+    // メモ入力フォームに入力
+    const input = page.locator("input[name='body']").first();
+    if (await input.isVisible()) {
+      await input.fill("実装完了。テスト通過済み。");
+      await page.waitForTimeout(800);
+    }
+  }
+
+  await page.waitForTimeout(1500);
 
   await context.close();
   await browser.close();

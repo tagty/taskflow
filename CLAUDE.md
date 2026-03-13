@@ -10,6 +10,10 @@ npx supabase db push     # DBマイグレーションをリモートに適用
 node scripts/record-pr-demo.js {PR番号} {PROJECT_ID}  # デモ GIF 生成 → gh-pages へデプロイ
 ```
 
+## アーキテクチャ決定記録（ADR）
+
+設計決定の背景・理由は `docs/adr/` を参照。新しい設計判断をした際は ADR を追加する。
+
 ## 開発ルール
 
 - Tailwind CSS のダークモード `dark:` クラスを必ず付ける

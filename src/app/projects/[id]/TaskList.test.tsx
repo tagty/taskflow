@@ -84,4 +84,71 @@ describe("TaskList", () => {
     expect(screen.getByText("テストタスク")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "保存" })).not.toBeInTheDocument();
   });
+
+  it("description が null の場合、詳細説明を表示しない", () => {
+    render(<TaskList tasks={[{ ...baseTask, description: null }]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    expect(screen.queryByText(/詳細/)).not.toBeInTheDocument();
+  });
+
+  it("description がある場合、タイトル下部に表示する", () => {
+    render(
+      <TaskList
+        tasks={[{ ...baseTask, description: "これは詳細説明です" }]}
+        projectId="proj-1"
+        allTags={[]}
+        notesByTaskId={{}}
+      />
+    );
+    expect(screen.getByText("これは詳細説明です")).toBeInTheDocument();
+  });
+
+  it("編集フォームに description textarea を表示する", async () => {
+    render(
+      <TaskList
+        tasks={[{ ...baseTask, description: "既存の説明" }]}
+        projectId="proj-1"
+        allTags={[]}
+        notesByTaskId={{}}
+      />
+    );
+    await userEvent.click(screen.getByRole("button", { name: "編集" }));
+    expect(screen.getByDisplayValue("既存の説明")).toBeInTheDocument();
+  });
+
+  it("メモボタンをクリックするとメモセクションを表示する", async () => {
+    render(<TaskList tasks={[baseTask]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    const memoBtn = screen.getByRole("button", { name: "メモ" });
+    await userEvent.click(memoBtn);
+    expect(screen.getByPlaceholderText("メモを追加...")).toBeInTheDocument();
+  });
+
+  it("notesByTaskId にメモがある場合、メモ展開時に表示する", async () => {
+    const notesByTaskId = {
+      "task-1": [
+        { id: "note-1", task_id: "task-1", body: "テストメモ内容", created_at: "2026-03-10T00:00:00Z" },
+      ],
+    };
+    render(<TaskList tasks={[baseTask]} projectId="proj-1" allTags={[]} notesByTaskId={notesByTaskId} />);
+    // aria-label="メモ" のため件数に関わらずアクセシブル名は "メモ"
+    const memoBtn = screen.getByRole("button", { name: "メモ" });
+    expect(memoBtn).toHaveTextContent("メモ(1)");
+    await userEvent.click(memoBtn);
+    expect(screen.getByText("テストメモ内容")).toBeInTheDocument();
+  });
+
+  it("メモが0件の場合、メモボタンに件数を表示しない", () => {
+    render(<TaskList tasks={[baseTask]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    const memoBtn = screen.getByRole("button", { name: "メモ" });
+    expect(memoBtn).toHaveTextContent("メモ");
+    expect(memoBtn).not.toHaveTextContent("メモ(");
+  });
+
+  it("メモボタンを再クリックするとメモセクションを閉じる", async () => {
+    render(<TaskList tasks={[baseTask]} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    const memoBtn = screen.getByRole("button", { name: "メモ" });
+    await userEvent.click(memoBtn);
+    expect(screen.getByPlaceholderText("メモを追加...")).toBeInTheDocument();
+    await userEvent.click(memoBtn);
+    expect(screen.queryByPlaceholderText("メモを追加...")).not.toBeInTheDocument();
+  });
 });

@@ -19,9 +19,4 @@ jobs:
 
       - run: npm ci
 
-      - name: verify
-        run: npm run verify
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: https://dummy.supabase.co
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: dummy-publishable-key
-          SUPABASE_SECRET_KEY: dummy-secret-key
+      - run: npm run verify

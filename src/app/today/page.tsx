@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import Link from "next/link";
 import { listTodayTasks, listStalledTasks } from "@/lib/supabase/queries";
 import { TaskStatusButton } from "@/components/TaskStatusButton";

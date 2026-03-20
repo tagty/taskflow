@@ -35,6 +35,8 @@ Issue → `feature/{issue-number}-{name}` ブランチ → `/kairo-requirements`
 | `/kairo-tasks` | 設計確定後 | タスクを1日単位に分割 |
 | `/kairo-implement` | 実装中 | TDD（red→green→refactor）で実装 |
 | `/self-review` | PR 作成前 | 規約・品質・要件の自動チェック |
+| `/retrospect` | セッション終了時（手動で詳細追記） | 学びを `.claude/learnings.md` に記録 |
+| `/diary-sync` | 定期的（週1など） | learnings.md を分析して CLAUDE.md に統合 |
 
 - PR には `## Demo` と `## Screenshots` セクションを必ず追加（`/pr-screenshot` スキルを参照）
 - Issue・PR のフォーマットは `/github-workflow` スキルを参照

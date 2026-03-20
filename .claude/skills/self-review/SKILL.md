@@ -31,11 +31,13 @@ Agent ツールで以下の5エージェントを **同時に** 起動する：
 - XSS・SQLインジェクションのリスクがないか
 - Server Actions 以外からの DB write がないか
 
-### Agent 3 — 型・品質検査
+### Agent 3 — 型・品質・設計検査
 - 型エラー・型 `any` の使用がないか
 - 未使用の変数・インポートがないか
 - エラーハンドリングが適切か（`if (error) throw error` パターン）
 - null/undefined の取り扱いが安全か
+- `.claude/rules/design-principles.md` の設計原則に違反していないか（SRP・DRY・YAGNI・依存の方向）
+- `.claude/rules/functional-style.md` のスタイルガイドに従っているか（ビジネスロジック層・Server Actions は必須、コンポーネント層は推奨）
 
 ### Agent 4 — テスト検証
 - 新しい関数・ロジックにテストがあるか

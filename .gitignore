@@ -51,3 +51,6 @@ node_modules/
 # PR screenshots (gh-pages ブランチで管理)
 /pr-*/
 /screenshots/
+
+# auto-instinct-system: セッションログ（一時ファイル）
+.claude/session-log.jsonl

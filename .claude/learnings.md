@@ -36,3 +36,18 @@
 - DBアクセスのある Next.js ページを新規作成する際は、初めから `force-dynamic` の要否を確認してから実装する（または `build` を CI の verify から除外したまま運用する）
 - CI が通ることを確認してから PR をマージする習慣を維持する
 - 週1で `/diary-sync` を実行して learnings.md のパターンを CLAUDE.md に統合する
+
+## 2026-03-25
+
+### ✓ うまくいった
+- Vite v8 + @vitejs/plugin-react v6 + Vitest v4 の同時アップグレードを1コミットで完遂できた
+- package.json と package-lock.json の差分（850追加/1828削除）から依存パッケージの大幅な整理が行われ、クリーンな状態に保てた
+- `/rev-requirements` でコードベースから要件定義書を逆生成し、実装済み機能（description・priority・estimate_minutes・task_notes の UI など）を網羅的に文書化できた
+- 要件数を 22→32 個に拡充しつつ、既存の要件番号体系（REQ-XXX / NFR-XXX）を壊さずに追記できた
+
+### ✗ うまくいかなかった
+- 特になし
+
+### → 次回の改善
+- `/rev-design` で技術設計文書も逆生成し、実装済みアーキテクチャを文書化する
+- 依存パッケージの大型アップグレード後は `npm run verify` だけでなく、ローカルで動作確認してから PR を作成する習慣を維持する

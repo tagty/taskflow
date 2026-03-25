@@ -208,4 +208,54 @@ describe("TaskList", () => {
     await userEvent.click(memoBtn);
     expect(screen.queryByPlaceholderText("メモを追加...")).not.toBeInTheDocument();
   });
+
+  it("doing → todo → done の順でグループを表示する", () => {
+    const tasks = [
+      { ...baseTask, id: "t1", title: "未着手タスク", status: "todo" as const },
+      { ...baseTask, id: "t2", title: "進行中タスク", status: "doing" as const },
+      { ...baseTask, id: "t3", title: "完了タスク", status: "done" as const },
+    ];
+    render(<TaskList tasks={tasks} projectId="proj-1" allTags={[]} notesByTaskId={{}} />);
+    const allText = document.body.textContent ?? "";
+    expect(allText.indexOf("進行中タスク")).toBeLessThan(allText.indexOf("未着手タスク"));
+    expect(allText.indexOf("未着手タスク")).toBeLessThan(allText.indexOf("完了タスク"));
+  });
+
+  it("タグ選択後に「すべて」ボタンで全タスクを再表示する", async () => {
+    const tasks = [
+      baseTask,
+      { ...baseTask, id: "task-2", title: "別タスク", tags: ["ci"] },
+    ];
+    render(<TaskList tasks={tasks} projectId="proj-1" allTags={["feature", "ci"]} notesByTaskId={{}} />);
+    await userEvent.click(screen.getByRole("button", { name: "ci" }));
+    expect(screen.queryByText("テストタスク")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "すべて" }));
+    expect(screen.getByText("テストタスク")).toBeInTheDocument();
+    expect(screen.getByText("別タスク")).toBeInTheDocument();
+  });
+
+  it("選択中のタグを再クリックするとフィルターを解除する", async () => {
+    const tasks = [
+      baseTask,
+      { ...baseTask, id: "task-2", title: "別タスク", tags: ["ci"] },
+    ];
+    render(<TaskList tasks={tasks} projectId="proj-1" allTags={["feature", "ci"]} notesByTaskId={{}} />);
+    await userEvent.click(screen.getByRole("button", { name: "ci" }));
+    await userEvent.click(screen.getByRole("button", { name: "ci" }));
+    expect(screen.getByText("テストタスク")).toBeInTheDocument();
+    expect(screen.getByText("別タスク")).toBeInTheDocument();
+  });
+
+  it("tags が空配列のタスクはタグフィルター選択時に非表示になる", async () => {
+    const tasks = [
+      { ...baseTask, id: "no-tag", title: "タグなしタスク", tags: [] },
+      { ...baseTask, id: "tagged", title: "タグありタスク", tags: ["feature"] },
+    ];
+    render(
+      <TaskList tasks={tasks} projectId="proj-1" allTags={["feature"]} notesByTaskId={{}} />
+    );
+    await userEvent.click(screen.getByRole("button", { name: "feature" }));
+    expect(screen.queryByText("タグなしタスク")).not.toBeInTheDocument();
+    expect(screen.getByText("タグありタスク")).toBeInTheDocument();
+  });
 });

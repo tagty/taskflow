@@ -110,4 +110,35 @@ describe("TodayPage", () => {
     render(await TodayPage());
     expect(screen.getByText("45m")).toBeInTheDocument();
   });
+
+  it("滞留タスクがある場合、滞留セクションを表示する", async () => {
+    vi.mocked(listTodayTasks).mockResolvedValue([]);
+    vi.mocked(listStalledTasks).mockResolvedValue([
+      baseTask({ id: "s1", title: "滞留タスク", status: "doing" }),
+    ]);
+    render(await TodayPage());
+    expect(screen.getByText("滞留タスク")).toBeInTheDocument();
+    expect(screen.getByText(/滞留中/)).toBeInTheDocument();
+  });
+
+  it("滞留タスクがない場合、滞留セクションを表示しない", async () => {
+    vi.mocked(listTodayTasks).mockResolvedValue([]);
+    vi.mocked(listStalledTasks).mockResolvedValue([]);
+    render(await TodayPage());
+    expect(screen.queryByText(/滞留中/)).not.toBeInTheDocument();
+  });
+
+  it("滞留タスクにプロジェクト名を表示する", async () => {
+    vi.mocked(listTodayTasks).mockResolvedValue([]);
+    vi.mocked(listStalledTasks).mockResolvedValue([
+      baseTask({
+        id: "s1",
+        title: "滞留タスク",
+        status: "doing",
+        projects: { name: "マイプロジェクト", color: null },
+      }),
+    ]);
+    render(await TodayPage());
+    expect(screen.getByText("マイプロジェクト")).toBeInTheDocument();
+  });
 });
